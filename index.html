@@ -113,7 +113,7 @@ function createTable(data){
         //Create new row
         let tr = document.createElement('tr');
         
-        //Create the cells for the date
+        //Create the cell for the date
         let td1 = document.createElement('td');
         let text1;
         
@@ -198,7 +198,8 @@ function createChart(){
     let row_length = table.rows[0].cells.length;
     
     for(let i = 1; i < row_length ; i++){
-        //Create a series for each channel (create a column for each month)
+        /*Create a series for each channel (a series is the 
+        bars in the table that represent the channel data)*/
         let series = {
             type: "column",
             name: table.rows[0].cells[i].innerText,
@@ -211,8 +212,8 @@ function createChart(){
     }
     
     for(let i = 0; i < row_length-1 ; i++){
-            //Iterate through data array an add the proper values
-          arr[i].dataPoints = [
+        //Iterate through data array an add the proper values
+        arr[i].dataPoints = [
             { label: "January", y: parseInt(table.rows[1].cells[i+1].innerText) } ,
             { label: "February", y: parseInt(table.rows[2].cells[i+1].innerText) },
             { label: "March", y: parseInt(table.rows[3].cells[i+1].innerText) },
@@ -340,8 +341,8 @@ window.onload = function() {
     //Get the data from the JSON file
     $.getJSON('data.json', function (data) {
     
-    //Call the create table function
-    createTable(data);
+        //Call the create table function
+        createTable(data);
     });
 };
 </script>
