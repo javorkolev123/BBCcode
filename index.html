@@ -7,13 +7,348 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
 <link href="main.css" media="all" rel="stylesheet" type="text/css" />
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 </head>
 <body>
 <script src="jquery-2.1.1.js"></script>
 <script>
-$.getJSON('data.json', function (data) {
+
+/**
+ * This function creates a table with 
+ * the data from the parsed JSON file
+ * 
+ * @param data - The parsed JSON data
+ */
+function createTable(data){
+    //Create table element
+    let table = document.createElement('table');
+    //Create a flag to check if first row has been created
+    let flag = 0;
+    
+    //Go through each data entry
+    for(let date in data){
+        //Obtain the data for the given date
+        let channels = data[date];
+        //Check if first row has been initialized
+        if(flag == 0){
+            //Create the date header and append to table
+            let tr_h = document.createElement('tr');
+            
+            let th = document.createElement('th');
+            th.onclick = function(){ sort_by_date(); };
+            
+            let text_h = document.createTextNode('Date');
+            
+            th.appendChild(text_h);
+            tr_h.appendChild(th);
+            
+            // Initialize all the headers for the different channels
+            // and set an onclick listener for sorting
+            let th1 = document.createElement('th');
+            th1.className = "channels";
+            th1.onclick = function(){ sort_by_column(1); };
+            
+            let th2 = document.createElement('th');
+            th2.className = "channels";
+            th2.onclick = function(){ sort_by_column(2); };
+            
+            let th3 = document.createElement('th');
+            th3.className = "channels";
+            th3.onclick = function(){ sort_by_column(3); };
+            
+            let th4 = document.createElement('th');
+            th4.className = "channels";
+            th4.onclick = function(){ sort_by_column(4); };
+            
+            let th5 = document.createElement('th');
+            th5.className = "channels";
+            th5.onclick = function(){ sort_by_column(5); };
+            
+            let th6 = document.createElement('th');
+            th6.className = "channels";
+            th6.onclick = function(){ sort_by_column(6); };
+            
+            let th7 = document.createElement('th');
+            th7.className = "channels";
+            th7.onclick = function(){ sort_by_column(7); };
+            
+            let text_h1 = document.createTextNode('BBC One');
+            text_h1.className='channels';
+            
+            let text_h2 = document.createTextNode('BBC Two');
+            let text_h3 = document.createTextNode('BBC Three');
+            let text_h4 = document.createTextNode('BBC Four');
+            let text_h5 = document.createTextNode('BBC News 24');
+            let text_h6 = document.createTextNode('CBBC');
+            let text_h7 = document.createTextNode('Cbeebies');
+            
+            //Append all headers to the table
+            th1.appendChild(text_h1);
+            tr_h.appendChild(th1);
+            
+            th2.appendChild(text_h2);
+            tr_h.appendChild(th2);
+            
+            th3.appendChild(text_h3);
+            tr_h.appendChild(th3);
+            
+            th4.appendChild(text_h4);
+            tr_h.appendChild(th4);
+            
+            th5.appendChild(text_h5);
+            tr_h.appendChild(th5);
+            
+            th6.appendChild(text_h6);
+            tr_h.appendChild(th6);
+            
+            th7.appendChild(text_h7);
+            tr_h.appendChild(th7);
+            
+            table.appendChild(tr_h);
+            
+            //Increase flag value as the first row has been created
+            flag++;
+        }
+        
+        //Create new row
+        let tr = document.createElement('tr');
+        
+        //Create the cells for the date
+        let td1 = document.createElement('td');
+        let text1;
+        
+        //Split the date and set the month accordingly
+        let arr_date = date.split("-");
+        switch(arr_date[1]){
+            case "01": text1 = document.createTextNode("January "+arr_date[0]); td1.id="1"; break;
+            case "02": text1 = document.createTextNode("February "+arr_date[0]); td1.id="2"; break;
+            case "03": text1 = document.createTextNode("March "+arr_date[0]); td1.id="3"; break;
+            case "04": text1 = document.createTextNode("April "+arr_date[0]); td1.id="4"; break;
+            case "05": text1 = document.createTextNode("May "+arr_date[0]); td1.id="5"; break;
+            case "06": text1 = document.createTextNode("June "+arr_date[0]); td1.id="6"; break;
+            case "07": text1 = document.createTextNode("July "+arr_date[0]); td1.id="7"; break;
+            case "08": text1 = document.createTextNode("August "+arr_date[0]); td1.id="8"; break;
+            case "09": text1 = document.createTextNode("September "+arr_date[0]); td1.id="9"; break;
+            case "10": text1 = document.createTextNode("October "+arr_date[0]); td1.id="10"; break;
+            case "11": text1 = document.createTextNode("November "+arr_date[0]); td1.id="11"; break;
+            case "12": text1 = document.createTextNode("December "+arr_date[0]); td1.id="12"; break;
+        }
+        
+        //Append date cell to row
+        td1.appendChild(text1);
+        tr.appendChild(td1);
+        
+        //Loop through all the channel data
+        for(let i=0; i < 7 ; i++){
+            let broadcasts;
+            
+            //Get data so it corresponds to the column heading
+            switch(i){
+                case 0: broadcasts = channels['bbcone']; break;
+                case 1: broadcasts = channels['bbctwo']; break;
+                case 2: broadcasts = channels['bbcthree']; break;
+                case 3: broadcasts = channels['bbcfour']; break;
+                case 4: broadcasts = channels['bbcnews24']; break;
+                case 5: broadcasts = channels['cbbc']; break;
+                case 6: broadcasts = channels['cbeebies']; break;
+            }
+            
+            //Create cell and append to row
+            let td = document.createElement('td');
+            let text = document.createTextNode(broadcasts);
+            
+            td.appendChild(text);
+            tr.appendChild(td);
+        }
+        //Append row to table
+        table.appendChild(tr);
+        
+    }
+    //Set table id, class and append to document
+    table.id = "table1";
+    table.class = "table";
+    document.body.insertBefore(table,document.getElementById("chartContainer"));
+    
+    //Call the create chart function
+    createChart();
+    
     console.log(data);
-});
+    
+}
+
+/**
+ *  This function instaciates the chart based on the data entries in the table 
+ */
+function createChart(){
+    //Instansiate canvas
+    var chart = new CanvasJS.Chart("chartContainer")
+    
+    //Get the table
+    let table = document.getElementById("table1");
+    
+    //Instantiate new array, that will contain all the data from a column
+    let arr = new Array();
+    
+    //Set the chart title
+    chart.options.title = {text: "Broadcasts by channel each month."};
+    
+    chart.options.data = [];
+    
+    //Get the length of the table row
+    let row_length = table.rows[0].cells.length;
+    
+    for(let i = 1; i < row_length ; i++){
+        //Create a series for each channel (create a column for each month)
+        let series = {
+            type: "column",
+            name: table.rows[0].cells[i].innerText,
+            showInLegend: true
+        };
+        
+        //Push them into data set
+        chart.options.data.push(series);
+        arr.push(series);
+    }
+    
+    for(let i = 0; i < row_length-1 ; i++){
+            //Iterate through data array an add the proper values
+          arr[i].dataPoints = [
+            { label: "January", y: parseInt(table.rows[1].cells[i+1].innerText) } ,
+            { label: "February", y: parseInt(table.rows[2].cells[i+1].innerText) },
+            { label: "March", y: parseInt(table.rows[3].cells[i+1].innerText) },
+            { label: "April", y: parseInt(table.rows[4].cells[i+1].innerText) },
+            { label: "May", y: parseInt(table.rows[5].cells[i+1].innerText) },
+            { label: "June", y: parseInt(table.rows[6].cells[i+1].innerText) },
+            { label: "July", y: parseInt(table.rows[7].cells[i+1].innerText) },
+            { label: "August", y: parseInt(table.rows[8].cells[i+1].innerText) },
+            { label: "September", y: parseInt(table.rows[9].cells[i+1].innerText) },
+            { label: "October", y: parseInt(table.rows[10].cells[i+1].innerText) },
+            { label: "November", y: parseInt(table.rows[11].cells[i+1].innerText) },
+            { label: "December", y: parseInt(table.rows[12].cells[i+1].innerText) }
+        ];
+    }
+
+    //Render the chart   
+    chart.render();
+}
+
+/**
+ * This function sorts the data in the table in descending order 
+ * based on the entries in the column selected
+ * 
+ * @param n - Column index 
+ */
+function sort_by_column(n){
+    
+    let table, rows, switching, i, x, y, shouldSwitch;
+    table = document.getElementById("table1");
+    switching = true;
+      /* Make a loop that will continue until
+      no switching has been done: */
+    while (switching) {
+        
+        // Start by saying: no switching is done:
+        switching = false;
+        rows = table.getElementsByTagName("TR");
+        
+        /* Loop through all table rows (except the
+        first, which contains table headers): */
+        for (i = 1; i < (rows.length - 1); i++) {
+            
+          // Start by saying there should be no switching:
+          shouldSwitch = false;
+          
+          
+          /* Get the two elements you want to compare,
+          one from current row and one from the next: */
+          x = rows[i].getElementsByTagName("TD")[n];
+          y = rows[i + 1].getElementsByTagName("TD")[n];
+          
+          
+         // Check if the two rows should switch
+         if (parseInt(x.innerHTML) > parseInt(y.innerHTML)) {
+             
+              // If so, mark as a switch and break the loop:
+              shouldSwitch= true;
+              break;
+              
+            }
+        }
+        if (shouldSwitch) {
+            /* If a switch has been marked, make the switch
+            and mark that a switch has been done: */
+            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            switching = true;
+        }
+    }
+}
+    
+    
+/**
+ * This function sorts the rows by their date
+ */
+function sort_by_date(){
+    let table, rows, switching, i, x, y, shouldSwitch;
+    table = document.getElementById("table1");
+    switching = true;
+      
+    /* Make a loop that will continue until
+    no switching has been done: */
+    while (switching) {
+        
+        // Start by saying: no switching is done:
+        switching = false;
+        rows = table.getElementsByTagName("TR");
+        
+        /* Loop through all table rows (except the
+        first, which contains table headers): */
+        for (i = 1; i < (rows.length - 1); i++) {
+            
+          // Start by saying there should be no switching:
+          shouldSwitch = false;
+          
+          
+          /* Get the two elements you want to compare,
+          one from current row and one from the next: */
+          x = rows[i].getElementsByTagName("TD")[0];
+          y = rows[i + 1].getElementsByTagName("TD")[0];
+          
+          
+         // Check if the two rows should switch
+         if (parseInt(x.id) > parseInt(y.id)) {
+             
+              // If so, mark as a switch and break the loop:
+              shouldSwitch= true;
+              break;
+              
+            }
+        }
+        if (shouldSwitch) {
+        
+          /* If a switch has been marked, make the switch
+          and mark that a switch has been done: */
+          rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+          switching = true;
+        }
+    }
+}
+
+
+
+window.onload = function() {
+    
+    //Get the data from the JSON file
+    $.getJSON('data.json', function (data) {
+    
+    //Call the create table function
+    createTable(data);
+    });
+};
 </script>
+    <div id="header">
+        <h3>BBC data</h3>
+    </div>
+    
+    <div id="chartContainer"></div>
 </body>
 </html>
